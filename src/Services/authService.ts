@@ -1,24 +1,17 @@
-export async function login(email: string, password: string) {
-  const res = await fetch('/api/login', {
+import type { User } from '../types';
+
+const API_URL = 'http://localhost:3001/api';
+
+export async function login(email: string, password: string): Promise<User | { error: string }> {
+  const res = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
     body: JSON.stringify({ email, password }),
   });
   return res.json();
 }
 
-export async function logout() {
-  const res = await fetch('/api/login', {
-    method: 'DELETE',
-    credentials: 'include',
-  });
-  return res.json();
+export async function logout(): Promise<void> {
+  await fetch(`${API_URL}/login`, { method: 'DELETE' });
 }
 
-export async function getCurrentUser() {
-  const res = await fetch('/api/login', {
-    credentials: 'include',
-  });
-  return res.json();
-}
