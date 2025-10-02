@@ -1,31 +1,50 @@
-export type PostData = {
-  id?: number;          // optional för nya poster
+// src/services/postsService.ts
+export interface Post {
+  id?: number;
   title: string;
   content: string;
+  category?: string;
   authorId?: number;
   authorName?: string;
-  category?: string;
-};
+}
 
-// Hämta alla poster
-export async function getPosts(): Promise<PostData[]> {
+// Hämta alla inlägg
+export async function getAll(): Promise<Post[]> {
   const res = await fetch('/api/posts');
+  if (!res.ok) throw new Error('Failed to fetch posts');
   return res.json();
 }
 
-// Skapa ett nytt inlägg
-export async function createPost(post: PostData): Promise<PostData> {
+// Hämta ett inlägg via ID
+export async function getById(id: number): Promise<Post> {
+  const res = await fetch(`/api/posts/${id}`);
+  if (!res.ok) throw new Error('Failed to fetch post');
+  return res.json();
+}
+
+// Skapa nytt inlägg
+export async function create(post: Post): Promise<void> {
   const res = await fetch('/api/posts', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(post),
   });
-  return res.json();
+  if (!res.ok) throw new Error('Failed to create post');
 }
 
-// (Valfritt) hämta ett enskilt inlägg
-export async function getPost(id: number): Promise<PostData | null> {
-  const res = await fetch(`/api/posts/${id}`);
-  if (!res.ok) return null;
-  return res.json();
+// Uppdatera ett inlägg
+export async function update(id: number, post: Post): Promise<void> {
+  const res = await fetch(`/api/posts/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(post),
+  });
+  if (!res.ok) throw new Error('Failed to update post');
 }
+
+// Ta bort ett inlägg
+export async function remove(id: number): Promise<void> {
+  const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Failed to delete post');
+}
+
