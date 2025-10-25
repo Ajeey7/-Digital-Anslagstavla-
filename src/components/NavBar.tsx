@@ -1,15 +1,18 @@
-
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.tsx';
+import { useAuth } from '../context/AuthContext';
 
 export default function NavBar() {
   const { user, logout } = useAuth();
-  const nav = useNavigate();
+  const navigate = useNavigate();
 
   const onLogout = async () => {
-    await logout();
-    nav('/login');
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
   };
 
   return (
@@ -23,8 +26,12 @@ export default function NavBar() {
             {user ? (
               <>
                 <Nav.Link as={Link} to="/posts/new">Nytt</Nav.Link>
-                <Navbar.Text className="me-2">Hej {user.displayName ?? user.email}</Navbar.Text>
-                <Button variant="outline-secondary" size="sm" onClick={onLogout}>Logga ut</Button>
+                <Navbar.Text className="me-2">
+                  Hej {user.displayName ?? user.email ?? 'Användare'}
+                </Navbar.Text>
+                <Button variant="outline-secondary" size="sm" onClick={onLogout}>
+                  Logga ut
+                </Button>
               </>
             ) : (
               <>
@@ -38,3 +45,4 @@ export default function NavBar() {
     </Navbar>
   );
 }
+
