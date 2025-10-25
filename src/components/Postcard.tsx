@@ -1,20 +1,28 @@
-// PostCard.tsx
-interface PostCardProps {
-  title: string;
-  content: string;
-  author: string;
-  createdAt: string;
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import type { Post } from '../interfaces/Post';
+
+interface Props {
+  post: Post;
 }
 
-export default function PostCard({ title, content, author, createdAt }: PostCardProps) {
+export default function PostCard({ post }: Props) {
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-shadow duration-300">
-      <h2 className="text-xl font-semibold text-[#1E3A8A]">{title}</h2>
-      <p className="text-gray-600 mt-2">{content}</p>
-      <div className="mt-4 text-sm text-gray-400 flex justify-between">
-        <span>{author}</span>
-        <span>{new Date(createdAt).toLocaleDateString()}</span>
-      </div>
-    </div>
+    <Card className="shadow-sm h-100">
+      <Card.Body>
+        <Card.Title>{post.title}</Card.Title>
+        <Card.Text>{post.content}</Card.Text>
+      </Card.Body>
+
+      <Card.Footer className="d-flex justify-content-between">
+        <small className="text-muted">
+          📅 {new Date(post.createdAt).toLocaleDateString('sv-SE')}
+        </small>
+        <Button variant="outline-primary" size="sm">
+          Läs mer
+        </Button>
+      </Card.Footer>
+    </Card>
   );
 }
+
