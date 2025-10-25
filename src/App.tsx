@@ -1,22 +1,19 @@
-import { useLocation } from 'react-router-dom';
-import Header from "./partials/Header";
-import Main from './partials/Main';
-import Footer from './partials/Footer';
-import BootstrapBreakpoints from './parts/BootstrapBreakpoints';
-
-// turn off when not needed for debugging
-const showBootstrapBreakpoints = true;
+import { Routes, Route, Link } from 'react-router-dom';
 
 export default function App() {
+  return (
+    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+      <h1>Min Anslagstavla</h1>
+      <nav style={{ marginBottom: '1rem' }}>
+        <Link to="/posts" style={{ marginRight: '1rem' }}>Inlägg</Link>
+        <Link to="/posts/new">Nytt Inlägg</Link>
+      </nav>
 
-  // scroll to top when the route changes
-  useLocation();
-  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-
-  return <>
-    <Header />
-    <Main />
-    <Footer />
-    {showBootstrapBreakpoints ? <BootstrapBreakpoints /> : null}
-  </>;
-};
+      <Routes>
+        <Route path="/posts" element={<div>Här är alla inlägg</div>} />
+        <Route path="/posts/new" element={<div>Lägg till nytt inlägg</div>} />
+        <Route path="*" element={<div>Välkommen! Välj en länk ovan.</div>} />
+      </Routes>
+    </div>
+  );
+}
