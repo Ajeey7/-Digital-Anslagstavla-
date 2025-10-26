@@ -1,9 +1,7 @@
 export interface Post {
-  id: string;
+  id: string;          // OBS: måste vara string
   title: string;
   content: string;
-  author: string;
-  createdAt: string; // <-- lägg till detta
-  // eventuellt fler fält
+  createdAt: string;   // ISO-datum
+  category?: string;
 }
-

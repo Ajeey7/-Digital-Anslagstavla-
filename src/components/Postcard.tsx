@@ -16,7 +16,7 @@ export default function PostCard({ post }: Props) {
 
       <Card.Footer className="d-flex justify-content-between">
         <small className="text-muted">
-          📅 {new Date(post.createdAt).toLocaleDateString('sv-SE')}
+          {post.createdAt ? `📅 ${new Date(post.createdAt).toLocaleDateString('sv-SE')}` : ''}
         </small>
         <Button variant="outline-primary" size="sm">
           Läs mer

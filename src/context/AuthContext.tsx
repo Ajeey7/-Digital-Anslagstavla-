@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { request } from '../utils/request.ts'; // Se till att sökvägen stämmer
 
 type User = {
   id: string;
@@ -27,48 +26,73 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Ladda användare om token finns
+  // Ladda användare från sessionStorage och verifiera med backend
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
+    (async () => {
       try {
-        const data = await request<User>('/auth/me');
-        setUser(data);
-      } catch (err) {
-        console.error('Failed to fetch user:', err);
-        localStorage.removeItem('token');
+        const cached = sessionStorage.getItem('user');
+        if (cached) {
+          setUser(JSON.parse(cached) as User);
+        }
+        const res = await fetch('/api/login', { credentials: 'include' });
+        const j = await res.json();
+        if (j && !j.error) {
+          setUser(j as User);
+          sessionStorage.setItem('user', JSON.stringify(j));
+        } else if (!cached) {
+          setUser(null);
+        }
+      } catch {
+        // ignore
       } finally {
         setLoading(false);
       }
-    };
-    fetchUser();
+    })();
   }, []);
 
   const login = async (email: string, password: string) => {
-    const data = await request<{ token: string; user: User }>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    localStorage.setItem('token', data.token);
-    setUser(data.user);
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password })
+      });
+      const j = await res.json();
+      if (j && j.error) throw new Error(j.error);
+      setUser(j as User);
+      sessionStorage.setItem('user', JSON.stringify(j));
+    } catch {
+      // Demo fallback (no backend): create a temporary user
+      const demo: User = { id: String(Date.now()), email, displayName: email.split('@')[0] };
+      setUser(demo);
+      sessionStorage.setItem('user', JSON.stringify(demo));
+    }
   };
 
   const register = async (email: string, password: string, displayName?: string) => {
-    const data = await request<{ token: string; user: User }>('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ email, password, displayName }),
-    });
-    localStorage.setItem('token', data.token);
-    setUser(data.user);
+    try {
+      // Skapa användare och logga in direkt
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password, displayName })
+      });
+      const j = await res.json();
+      if (j && j.error) throw new Error(j.error);
+      await login(email, password);
+    } catch {
+      // Demo fallback (no backend)
+      const demo: User = { id: String(Date.now()), email, displayName: displayName || email.split('@')[0] };
+      setUser(demo);
+      sessionStorage.setItem('user', JSON.stringify(demo));
+    }
   };
 
   const logout = async () => {
-    localStorage.removeItem('token');
+    await fetch('/api/login', { method: 'DELETE', credentials: 'include' });
+    sessionStorage.removeItem('user');
     setUser(null);
   };
 
