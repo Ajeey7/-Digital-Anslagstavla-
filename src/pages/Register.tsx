@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -8,26 +9,13 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [err, setErr] = useState<string | null>(null);
   const nav = useNavigate();
+  const { register } = useAuth();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
     try {
-      const res = await fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password, displayName })
-      });
-      const j = await res.json();
-      if (j && j.error) throw new Error(j.error);
-      // Efter registrering, försöka logga in (call /api/login)
-      await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password })
-      });
+      await register(email, password, displayName);
       nav('/posts');
     } catch (error: any) {
       setErr(error.message || 'Registrering misslyckades');
