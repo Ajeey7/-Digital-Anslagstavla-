@@ -2,3 +2,45 @@ body {
   padding-top: 56px;
 }
 
+:root {
+  --brand-primary: #1E3A8A; /* djup blå */
+  --brand-accent: #F97316;  /* orange accent */
+  --brand-muted: #6b7280;   /* grå text */
+}
+
+:root {
+  --bs-primary: var(--brand-primary);
+}
+
+html, body {
+  background-color: #f8fafc;
+  color: #111827;
+}
+
+.btn-accent {
+  --bs-btn-bg: var(--brand-accent);
+  --bs-btn-border-color: var(--brand-accent);
+  --bs-btn-hover-bg: #ea580c;
+  --bs-btn-hover-border-color: #ea580c;
+  --bs-btn-active-bg: #c2410c;
+  --bs-btn-active-border-color: #c2410c;
+  --bs-btn-color: #fff;
+}
+
+.hero {
+  background: linear-gradient(135deg, rgba(30,58,138,0.95), rgba(30,58,138,0.75)), url('/images/start.jpg');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  border-radius: .5rem;
+}
+
+.hero h1 {
+  font-weight: 700;
+}
+
+.card {
+  border: 0;
+  border-radius: .5rem;
+}
+
