@@ -25,7 +25,8 @@ export default function Login() {
     <Container className="d-flex justify-content-center">
       <Card className="mt-5 w-100" style={{ maxWidth: 480 }}>
         <Card.Body>
-          <Card.Title>Logga in</Card.Title>
+          <Card.Title className="mb-1">Logga in</Card.Title>
+          <div className="text-muted mb-3">Fortsätt till din anslagstavla</div>
           {err && <Alert variant="danger">{err}</Alert>}
           <Form onSubmit={submit}>
             <Form.Group className="mb-3">
@@ -36,7 +37,7 @@ export default function Login() {
               <Form.Label>Lösenord</Form.Label>
               <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} required />
             </Form.Group>
-            <Button type="submit">Logga in</Button>
+            <Button type="submit" className="btn-accent">Logga in</Button>
           </Form>
         </Card.Body>
       </Card>
